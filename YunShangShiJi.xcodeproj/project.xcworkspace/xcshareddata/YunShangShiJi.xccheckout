@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>1F6CD242-C3D8-4C16-8B52-883E0899646E</string>
+	<key>IDESourceControlProjectName</key>
+	<string>YunShangShiJi</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>341c06f6-8539-ba4b-9cff-b58570a055cb++4318</key>
+		<string>http://192.168.1.9:81/svn/cloud/IOS</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>YunShangShiJi 2 2/YunShangShiJi.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>341c06f6-8539-ba4b-9cff-b58570a055cb++4318</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>341c06f6-8539-ba4b-9cff-b58570a055cb++4318</key>
+		<string>http://192.168.1.9:81/svn/cloud</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>http://192.168.1.9:81/svn/cloud/IOS/YunShangShiJi%202%202/YunShangShiJi.xcodeproj</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>341c06f6-8539-ba4b-9cff-b58570a055cb++4318</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>341c06f6-8539-ba4b-9cff-b58570a055cb++4318</string>
+			<key>IDESourceControlWCCName</key>
+			<string>YSSJ-IOS</string>
+		</dict>
+	</array>
+</dict>
+</plist>

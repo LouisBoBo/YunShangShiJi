@@ -1,0 +1,124 @@
+//
+//  PrefixHeader.pch
+//  YunShangShiJi
+//
+//  Created by 云商 on 15/7/21.
+//  Copyright (c) 2015年 ios-1. All rights reserved.
+//
+
+#import <Availability.h>
+
+#ifndef YunShangShiJi_PrefixHeader_pch
+#define YunShangShiJi_PrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#define IIII 180
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+
+#ifdef __OBJC__
+
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+
+
+#import "EMAlertView.h"
+#import "TTGlobalUICommon.h"
+#import "UIViewController+HUD.h"
+#import "UIViewController+DismissKeyboard.h"
+#import "NSString+Valid.h"
+#import "UIViewController+chatList.h"
+#import "DataManager.h"
+#import "Signmanager.h"
+#import "NSString+helper.h"
+#import "UIImage+helper.h"
+#import "UIViewExt.h"
+#import "EaseMob.h"
+#import "MobClick.h"
+
+#import "Masonry.h"
+#import "UIView+Masonry_TF.h"
+#import "APIClient.h"
+#import "UIImageView+TFCommon.h"
+#import "UIImage+TFCommon.h"
+#import "NSString+TFCommon.h"
+#import "NSObject+TFCommon.h"
+#import "UIViewController+TFCommon.h"
+#import "NSDictionary+TFCommon.h"
+#import "UIAlertView+TFCommon.h"
+#import "UIActionSheet+TFCommon.h"
+#import "NSDate+TFCommon.h"
+#import "CALayer+TFCommon.h"
+#import "UIWindow+TFCommon.h"
+#import "Login.h"
+#import "TFConfig.h"
+#import "Const.h"
+#import "UIView+Frame.h"
+#import "UIButton+TFCommon.h"
+#import "UIScrollView+MyRefresh.h"
+#import "NSTimer+Weak.h"
+#import "TFStatisticsClickVM.h"
+#import "PhotoOperate.h"
+#import "Response.h"
+#import "PublicViewModel.h"
+#import "PublicModel.h"
+#import "Urls.h"
+#import "MiniShareManager.h"
+#endif
+
+
+
+#define IS_IPHONE_5 ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
+
+#define RGBACOLOR(r,g,b,a) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:(a)]
+
+#define KNOTIFICATION_LOGINCHANGE @"loginStateChange"
+
+#define CHATVIEWBACKGROUNDCOLOR [UIColor colorWithRed:0.936 green:0.932 blue:0.907 alpha:1]
+
+
+#ifdef DEBUG
+#define My_DEBUG 1
+#define MyLog(fmt, ...) {NSLog((@"%s [Line %d] \n" fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);}
+#else
+#define My_DEBUG 0
+#define MyLog(...)
+#endif
+
+//
+//#ifdef DEBUG
+//#define DMLog(...) %s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__])
+//#else
+//#define DMLog(...) do { } while (0)
+//#endif
+
+
+//A better version of NSLog
+//#define My1Log(format, ...) do {                                                                      \
+//fprintf(stderr, "<%s : %d> %s\n",                                           \
+//[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],  \
+//__LINE__, __func__);                                                        \
+//(NSLog)((format), ##__VA_ARGS__);                                           \
+//fprintf(stderr, "-------\n");                                               \
+//} while (0)
+
+
+#define ESWeak(var, weakVar) __weak __typeof(&*var) weakVar = var
+#define ESStrong_DoNotCheckNil(weakVar, _var) __typeof(&*weakVar) _var = weakVar
+#define ESStrong(weakVar, _var) ESStrong_DoNotCheckNil(weakVar, _var); if (!_var) return;
+
+#define ESWeak_(var) ESWeak(var, weak_##var);
+#define ESStrong_(var) ESStrong(weak_##var, _##var);
+
+/** defines a weak `self` named `__weakSelf` */
+#define ESWeakSelf      ESWeak(self, __weakSelf);
+/** defines a strong `self` named `_self` from `__weakSelf` */
+#define ESStrongSelf    ESStrong(__weakSelf, _self);
+
+#endif
+

@@ -1,0 +1,24 @@
+{
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "341c06f6-8539-ba4b-9cff-b58570a055cb++6201" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "341c06f6-8539-ba4b-9cff-b58570a055cb++6201" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "1E24EE08-6A52-4519-AC02-BB928DCFA4CB",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "341c06f6-8539-ba4b-9cff-b58570a055cb++6201" : ""
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "YunShangShiJi",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "YunShangShiJi.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/192.168.1.9:81\/svn\/cloud",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "341c06f6-8539-ba4b-9cff-b58570a055cb++6201"
+    }
+  ]
+}

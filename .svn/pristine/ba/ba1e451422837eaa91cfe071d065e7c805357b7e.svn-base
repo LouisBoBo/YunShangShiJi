@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<title>店铺首页</title>
+<link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="home.min.css?v=2016031615"/>
+<link rel="stylesheet" type="text/css" href="slick.css"/>
+<link rel="stylesheet" type="text/css" href="" id="theme"/>
+</head>
+<body class="overflow-hidden" style="padding-top:44px">
+	
+	<div class="storeEditTop">
+		<a onclick="getGuide()" class="guidebtn"><i class="icon-guide"></i></a>
+		<a onclick="shareMyShop()" class="sharebtn"><i class="icon-shopshare"></i></a>
+		<div class="menu clearfix">
+			<a data-url="view/store/edit.html" onclick="toPage(this)" class="selected">店铺主页</a>
+			<a data-url="view/store/theme/edit.html" onclick="toPage(this)">店铺编辑</a>
+		</div>
+	</div>
+
+	<div id="tpl-container">
+	
+	</div>
+	
+	<div class="fixedRight">
+		<ul>
+			<li>
+				<a onclick="refresh()"><span class="icon-refresh"></span></a>
+			</li>
+		</ul>
+	</div>
+	
+	<div class="loadingWrap">
+		<div id="loadingStatus">
+			<div class="spinner"><div class="spinner-container loading-container1"><div class="circle1"></div><div class="circle2"></div><div class="circle3"></div><div class="circle4"></div></div><div class="spinner-container loading-container2"><div class="circle1"></div><div class="circle2"></div><div class="circle3"></div><div class="circle4"></div></div><div class="spinner-container loading-container3"><div class="circle1"></div><div class="circle2"></div><div class="circle3"></div><div class="circle4"></div></div></div>
+		</div>
+		<div class="loadingText"></div>
+	</div>
+	
+	<div class="searchModal">
+		<div class="windowbg" onclick="hideWindow()"></div>
+		<div class="windowContent" id="windowContent">
+			<div>
+				<div class="searchShopAttrBox">
+					<i class="searchIcon" onclick="searchShopAttr()"></i>
+					<input type="text" placeholder="搜索" onkeyup="showCancelIcon(this)"/>
+				</div>
+				<div class="serarchNav">
+		          	<ul></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+<script type="text/javascript" src="lib.min.js?v=2016031615"></script>
+<script type="text/javascript" src="https://yssj668.b0.upaiyun.com/H5/public/js/plugin/slick.min.js"></script>
+<script type="text/javascript">
+var ua = navigator.userAgent;
+function template(url){
+	if(ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1){
+		var html=android.returnContent(url);
+		return html;
+	}else{
+		var html=OCModel.callObjectiveCWithReturnFileWithName(url);
+		return html;
+	}
+}
+//跳转商品详情
+function toGoodsDetail(self){
+	var shop_code=$(self).attr("data-shop_code");
+	var shop_name=$(self).attr("data-shop_name");
+	if(ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1){
+		android.shopDetail(shop_code.toString());
+		
+	}else if(!!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)){
+		OCModel.callObjectiveCWithDict({"shop_code":shop_code});
+	}else{
+		
+		if(shop_name!="undefined"&&shop_name!="null"&&shop_name!=""&&!!shop_name){
+			window.location.href=basePath+"view/store/d.html?r="+realm+"&s="+shop_code+"&n="+shop_name;
+		}else{
+			window.location.href=basePath+"view/store/d.html?r="+realm+"&s="+shop_code;
+		}
+		
+	}
+}
+loading("show");
+var curPage=1;
+var globalStyle=null;
+var realm=null;
+var token=null;
+var windowWidth=$(window).width();
+var windowHeight=$(window).height();
+var isLoadedShopLikes=false;
+var isLoadedHotArea=false;
+var isLoadedFirstGoods=false;
+//是否首次开店
+var isFirstFlag=false;
+var urlParam=null;
+var isAndroid=null;
+var isIOS=null;
+//判断是否是从安卓app进来的参数
+if(ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1){
+	isAndroid="true";
+	//var isAndroid="81710,URIA81BDPH7S1XQTJ0RR,true";
+	realm=(android.returnParam()).split(",")[0];
+	token=(android.returnParam()).split(",")[1];
+	urlParam="realm="+realm+"&token="+token+"&isAndroid=true";
+	isFirstFlag=android.isFirst();
+}
+//判断是否是从IOSapp进来的参数
+if(!!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)){
+	isIOS="true";
+	var iosParam=OCModel.callObjectiveCWithReturnUserString();
+	realm=iosParam.split(",")[0];
+	token=iosParam.split(",")[1];
+	urlParam="realm="+realm+"&token="+token+"&isIOS=true";
+	isFirstFlag=OCModel.callObjectiveCWithIsOpenShop();
+}
+
+if(isFirstFlag=="true"){
+	$(".guidebtn i").addClass("flicker");
+}
+//获取店铺模板
+$.ajax({
+	url:basePath+"store/getStoreTemp?shopman=true&realm="+realm+"&back=true",
+	dataType:"jsonp",
+    jsonpCallback:"getTemplateCallback",
+	success:function(data){
+		
+	},
+	error:function(data){
+		warning("网络开小差啦，检查一下网络")
+	}
+});
+
+$(function(){
+	
+	//获取店铺信息
+	$.ajax({
+		url:basePath+"store/queryStoreHome?shopman=true&token="+token+"&realm="+realm+"&back=true",
+		async:true,
+		dataType:"jsonp",
+	    jsonpCallback:"getShopInfoCallback",
+		success:function(data){
+			
+		}
+	});
+	
+	$(".searchModal .windowContent").css("width",$(window).width()*0.8);
+	$(".searchModal .windowContent>div").css("width",($(window).width()*0.8+17));
+	
+	$(".searchModal input").on("keyup",function(e){
+		if (e.which == 13 ) {
+			searchShopAttr();
+		}
+	});
+	
+});
+
+
+//第三套模板获取热卖
+function getHotArea(){
+	if($(".shopHotArea").length>0){
+		$.ajax({
+    		url:basePath+"storeShop/queryHotShop?shopman=true&realm="+realm+"&back=true",
+    		dataType:"jsonp",
+    	    jsonpCallback:"getHotAreaCallback",
+    		data:{
+    			"page.curPage":1,
+            	"pageSize":12
+            },
+    		success:function(data){
+    			
+    		}
+    	});
+	}
+}
+//滚动事件
+function scrollfn(){
+	
+	$(window).on("scroll",function(){
+		var scrollTop = $(this).scrollTop();
+		var scrollHeight = $(document).height();
+		var windowHeight = $(this).height();
+		var wrapperTop=$("#wrapper").position().top;
+		
+		if(globalStyle.split("-")[0]=="5"&&scrollTop>=100&&!$(".menuWrap").is(":hidden")){
+			$(".menuWrap").removeClass("menuShow").slideUp();
+		}
+		
+		if(!isLoadedShopLikes&&scrollTop>0){
+			if(globalStyle.split("-")[0]!="5"&&globalStyle.split("-")[0]!="2"){
+				/*
+					1：默认
+					2：轮播图
+					3：正方形图
+				*/
+				isLoadedShopLikes=true;
+				$.ajax({
+					url:basePath+"store/queryStoreLike?realm="+realm+"&back=true",
+					dataType:"jsonp",
+				    jsonpCallback:"getShopLikeCallback",
+					success:function(data){
+						
+					}
+				})
+						
+			}
+		}
+		
+		//热卖
+		if(!isLoadedHotArea&&scrollTop>=100){
+			if(globalStyle.split("-")[0]=="3"){
+				isLoadedHotArea=true;
+				getHotArea();
+			}
+		}
+		
+		//商品列表
+		if(!isLoadedFirstGoods&&scrollTop>=200){
+			if(globalStyle.split("-")[0]!="5"&&globalStyle.split("-")[0]!="2"){
+				isLoadedFirstGoods=true;
+				$("#scroller>ul>li:first").addClass("selected");
+				$("#scroller>ul>li:first img").attr("src","https://yssj668.b0.upaiyun.com/"+$("#scroller>ul>li:first img").attr("data-selected"));
+				$.ajax({
+					url:basePath+"storeShop/queryShopCondition?realm="+realm+"&back=true",
+					data:{
+						"type1":$("#scroller>ul>li:first a").attr("data-type1"),
+						"type_name":$("#scroller>ul>li:first a").attr("data-type_name"),
+						"pager.curPage":1,
+					},
+					dataType:"jsonp",
+				    jsonpCallback:"goodsListCallback",
+					success:function(data){
+						
+					},
+					error:function(data){
+						isLoadedFirstGoods=true;
+					}
+				});
+			}
+		}
+		
+		if($("#loadingStatus").is(":hidden")&&(scrollTop + windowHeight == scrollHeight)){
+			$("#loadingStatus").show().siblings().hide();
+			var url=basePath+"storeShop/queryShopCondition?realm="+realm+"&back=true";
+			var data={
+            	"pager.curPage":(curPage+1),
+            	"type1":$("#scroller .selected>a").attr("data-type1"),
+            	"type_name":$("#scroller .selected>a").attr("data-type_name")
+            }
+			if(globalStyle.split("-")[0]=="2"){
+				url=basePath+"storeShop/queryShopCondition?realm="+realm+"&two=true"+"&back=true";
+				data={
+	            	"pager.curPage":(curPage+1),
+	            	"type1":$("#scroller .selected>a").attr("data-type1"),
+	            	"type_name":$("#scroller .selected>a").attr("data-type_name"),
+	            	"pager.pageSize":5
+	            }
+			}
+			$.ajax({	
+				url:url,
+				dataType:"jsonp",
+			    jsonpCallback:"loadingGoodsCallback",
+				data:data,
+				success:function(data){
+					
+				},
+				error:function(data){
+					$("#loadingStatus").hide();
+				}
+			});
+			
+				
+		}
+	});
+}
+
+function getTheme(style){
+	
+	if(!!style&&style.toString().indexOf("-")>0){
+		var theme=style.split("-");
+		$("#theme").attr("href","https://yssj668.b0.upaiyun.com/H5/public/css/store/theme/"+theme[0]+"/"+theme[1]+".css");
+	}else{
+		$("#theme").attr("href","https://yssj668.b0.upaiyun.com/H5/public/css/store/theme/4/1.css");
+	}
+	
+}
+
+function getContent(style){
+	if(!!style&&style.toString().indexOf("-")>0){
+		var theme=style.split("-");
+		$("#tpl-container").html(template(style+"content.html"));
+	}else{
+		$("#tpl-container").html(template("4-1content.html"));
+	}
+}
+
+function getGuide(){
+	$("body").addClass("overflow-hidden");
+	var style=globalStyle;
+	if($("#guide").length==0){
+		$("body").append('<div id="guide"></div>');
+	}
+	$("#guide").html(template("guide.html"));
+	$(".guidebtn i").removeClass("flicker");
+}
+function nextStep(self){
+	var target=$(self).attr("data-target");
+	var img=parseInt($(self).attr("data-img"));
+	$("body").addClass("overflow-hidden");
+	if($("#guide ."+target).length>0){
+		$("#guide ."+target).show().siblings().hide();
+		$("#guide ."+target).addClass("show").siblings().removeClass("show");
+	}else{
+		$("body").removeClass("overflow-hidden");
+		$("#guide").remove();
+	}
+	
+}
+function hideGuide(){
+	$("body").removeClass("overflow-hidden");
+	$("#guide").remove();
+}
+//获取类别
+var myScroll;
+
+function loaded () {
+	myScroll = new IScroll('#wrapper', { eventPassthrough: true, scrollX: true, scrollY: false, preventDefault: false });
+}
+function getType(){
+	$.ajax({
+		url:"https://yssj668.b0.upaiyun.com/H5/shop_type.json",
+		dataType:"json",
+		async:false,
+		success:function(data){
+			var shopTypes = data;
+			var arr=[];
+			for(var i in shopTypes){
+				arr.push(shopTypes[i]);
+			}
+			for(var i=0;i<arr.length;i++){
+		        for(var j=0;j<i;j++){
+		            if(parseInt(arr[j].sequence)>=parseInt(arr[i].sequence)){
+		                temp=arr[j];
+		                arr[j]=arr[i];
+		                arr[i]=temp;
+		            }
+		        }
+		    }
+			for(var i=0;i<arr.length;i++){
+				if(arr[i].dir_level==1&&arr[i].is_show==1){
+					var html = '<li><a class="block" onclick="togglelist(this)" data-type1="'+ arr[i].id +'" data-type_name="'+arr[i].type_name+'">'+
+					'<img src="https://yssj668.b0.upaiyun.com/'+((arr[i].ico).split(",")[0]).split(".")[0]+globalStyle+'.png" data-src="'+((arr[i].ico).split(",")[0]).split(".")[0]+globalStyle+'.png" data-selected="'+((arr[i].ico).split(",")[1]).split(".")[0]+globalStyle+'.png">'+arr[i].type_name +
+					'</a></li>';
+					$('#scroller ul').append(html);
+					$("#goodsContent>div").append('<div class="row" data-type1="'+ arr[i].id+'" style="width:'+windowWidth+'px"></div>');
+				}
+			}
+			
+			//第三套模板下面的热卖不显示
+			if(globalStyle=="3-1"||globalStyle=="3-2"||globalStyle=="3-3"||globalStyle=="3-4"||globalStyle=="3-5"){
+				var removeType=$("#scroller a[data-type_name='热卖']").attr("data-type1");
+				$("#scroller a[data-type_name='热卖']").parent().remove();
+				$("#goodsContent .row[data-type1='"+removeType+"']").remove();
+			}
+			$("#goodsContent>div").css("width",$("#goodsContent .row").length*windowWidth);
+			$('#scroller').width($('#scroller li').length*($(window).width()/4));
+			$('#scroller li').width($(window).width()/4);
+			loaded();
+			
+			
+			//搜索栏目的类别
+			for(var i in shopTypes){
+				var shopType = shopTypes[i];
+				if(shopType.dir_level == 1 && shopType.is_show == 1 && shopType.type_name!="热卖"){
+					var html = ' <li id="'+ shopType.id  + '">' +
+					'  <h3 class="fs14 gray">'+ shopType.type_name +'</h3>'+
+					'  </li>';
+					$('.serarchNav>ul').append(html);
+				}else if(shopType.dir_level == 2 && shopType.is_show == 1){
+					var html = '<div class="clearfix searchTypeItem" onclick="toSearch(this)" data-text="'+shopType.type_name+'">'+
+								'<div class="pull-right"><i class="icon icon-right"></i></div>'+
+								'<div><img src="https://yssj668.b0.upaiyun.com/'+ shopType.ico +'"></img>&nbsp;&nbsp;'+
+									'<span class="fs14" dir_level="'+ shopType.dir_level +'" data-id="'+ shopType.id +'" parent_id="'+ shopType.parent_id +'">' + shopType.type_name +'</span>'+
+								'</div>';
+					$('li#'+shopType.parent_id).append(html);
+				}else{
+					
+				}
+				
+			}
+		},error:function(data){
+			
+		}
+	});
+}
+
+var _index=0;
+var _type1=null;
+function togglelist(self){
+	var selectedIndex=$("#scroller .selected").index();
+	curPage=1;
+	$("#scroller .selected img").attr("src","https://yssj668.b0.upaiyun.com/"+$("#scroller .selected img").attr("data-src"));
+	$(self).find("img").attr("src","https://yssj668.b0.upaiyun.com/"+$(self).find("img").attr("data-selected"));
+	$(self).parent().addClass("selected").siblings().removeClass("selected");
+	_type1= $(self).attr("data-type1");
+    var type_name=$(self).attr("data-type_name");
+    _index=$(self).parent().index();
+    
+    var url=basePath+"storeShop/queryShopCondition?realm="+realm+"&back=true";
+	var data={
+    	"pager.curPage":1,
+    	"type1":_type1,
+    	"type_name":type_name
+    }
+	if(globalStyle.split("-")[0]=="2"){
+		url=basePath+"storeShop/queryShopCondition?realm="+realm+"&two=true"+"&back=true";
+		data={
+	       	"pager.curPage":1,
+	       	"type1":_type1,
+	       	"type_name":type_name,
+	       	"pager.pageSize":5
+	    }
+		
+	}
+	$.ajax({	
+		url:url,
+		data:data,
+		dataType:"jsonp",
+	    jsonpCallback:"toggleListCallback",
+		success:function(data){
+			
+		}
+	});
+}
+
+//跳转到搜索页面
+function toSearch(self){
+	var typeName=$(self).find("span").text();
+	var id=$(self).find('span').attr('data-id');
+	var parent_id=$(self).find('span').attr('parent_id');
+	window.location.href=basePath+"view/store/search.html?ios=true&realm="+realm+"&id=" + id + '&parent_id='+ parent_id + '&typeName='+typeName;
+}
+function showCancelIcon(self){
+	if($(self).val()!=""){
+		$(".searchShopAttrBox .cancelIcon").show();
+	}else{
+		$(".searchShopAttrBox .cancelIcon").hide();
+	}
+}
+function searchShopAttr(){
+	var val=$.trim($(".searchShopAttrBox input").val());
+	window.location.href=basePath+"/view/store/allSearch.html?search="+val+"&realm="+realm;
+	/* if($(".searchTypeItem[data-text='"+val+"']").length==0){
+		warning("没有该类别！");
+		return;
+	}else{
+		$(".searchTypeItem[data-text='"+val+"']").click();
+	} */
+	
+}
+function clearInput(){
+	$(".searchShopAttrBox input").val("");
+}
+
+//简介
+function toDesc(){
+	window.location.href=basePath+"view/store/desc.html?"+urlParam+"&ios=true";
+}
+
+//私聊
+function toChat(){
+	if(isAndroid=="true"||isIOS=="true"){
+		warning("亲，店主不能联系自己哦~");
+		return;
+	}else{
+		window.location.href=basePath+"view/store/contactShopman.html?"+urlParam+"&ios=true";
+	}
+	
+}
+
+function toNotice(){
+	window.location.href=basePath+"view/store/notice.html?"+urlParam+"&ios=true";
+}
+
+//更多
+function toMore(){
+	var text=$("#categoryText").text();
+	window.location.href=basePath+"view/store/more.html?"+urlParam+"&ios=true";
+}
+
+//上新
+function toNew(){
+	window.location.href=basePath+"view/store/new.html?"+urlParam+"&ios=true";
+}
+
+//全部商品
+function toAll(){
+	window.location.href=basePath+"view/store/all.html?"+urlParam+"&ios=true";
+}
+//搜索
+function searchModal(){
+	/* $('#myModal').modal('show'); */
+	$("body").addClass("overflow-hidden");
+	$(".searchModal").show();
+	$(".searchModal .windowContent").addClass("lefted").animate({
+		left:0
+	},500);
+	$('.searchModal input[type="text"]').val("");
+}
+function hideWindow(){
+	
+	$(".searchModal .windowContent").removeClass("lefted").animate({
+		left:"-100%"
+	},500,function(){
+		$("body").removeClass("overflow-hidden");
+		$(".searchModal").hide();
+	});
+}
+var windowContent=document.getElementById("windowContent");
+var xx,yy,XX,YY,swipeX,swipeY ;
+windowContent.addEventListener('touchstart',function(event){
+    xx = event.targetTouches[0].screenX ;
+    yy = event.targetTouches[0].screenY ;
+    swipeX = true;
+    swipeY = true ;
+})
+windowContent.addEventListener('touchmove',function(event){
+     XX = event.targetTouches[0].screenX ;
+     YY = event.targetTouches[0].screenY ;
+     if(swipeX && Math.abs(XX-xx)-Math.abs(YY-yy)>0)  //左右滑动
+     {
+         event.stopPropagation();//组织冒泡
+         event.preventDefault();//阻止浏览器默认事件
+         swipeY = false ;
+         if(XX-xx<0){
+        	 $("#windowContent").css("left",(XX-xx)+"px");
+         }
+     }
+})
+windowContent.addEventListener('touchend',function(event){
+	var index=$("#scroller li.selected").index();
+	if(XX-xx<0){
+		if(xx-XX>120){
+   			$(".searchModal .windowContent").removeClass("lefted").animate({
+   				left:"-100%"
+			},500,function(){
+				$("body").removeClass("overflow-hidden");
+				$(".searchModal").hide();
+			});
+   	 	}else{
+   	 		$("#windowContent").animate({
+   	 			left:"0"
+   	 		},500);
+   	 	}
+   	 
+    }
+    
+})
+//购物车
+function toShopcart(){
+	if(!!isAndroid&&isAndroid=="true"){
+		android.h5ToShopCart();
+	}else if(!!isIOS&&isIOS=="true"){
+		OCModel.callObjectiveCWithGoShopCart();
+	}else{
+		window.location.href=basePath+"view/shopcart/index.html?from="+encodeURIComponent(basePath+"view/store/edit.html?"+urlParam);
+	}
+}
+
+//个人中心
+function toPersonal(){
+	if(!!isAndroid&&isAndroid=="true"){
+		android.h5ToMineInfo();
+	}else if(!!isIOS&&isIOS=="true"){
+		OCModel.callObjectiveCWithGoPersonCenter();
+	}else{
+		window.location.href=basePath+"view/personal/index.html?"+urlParam+"&ios=true";
+	}
+}
+
+//热卖
+function toHotArea(){
+	window.location.href=basePath+"view/store/hotArea.html?"+urlParam+"&ios=true";
+}
+
+
+//模板2 商品详情
+function toDetail(self){
+	var shop_code=$(self).parents(".goodsitem").attr("data-shop_code");
+	window.location.href=basePath+"view/store/d.html?s="+shop_code+"&r="+realm+"&ios=true";
+}
+//模板2 联系店主
+function toChat2(self){
+	var shop_code=$(self).parents(".goodsitem").attr("data-shop_code");
+	window.location.href=basePath+"view/store/chat.html?shop_code="+shop_code+"&"+urlParam+"&ios=true";
+}
+
+//模板5 菜单
+function toggleMenu(){
+	if(!$(".menuWrap").hasClass("menuShow")){
+		$(".menuWrap").addClass("menuShow").slideDown();
+	}else{
+		$(".menuWrap").removeClass("menuShow").slideUp();
+	}
+}
+
+//选择模板
+function showThemeModal(){
+	window.location.href=basePath+"view/store/selectTheme.html?"+urlParam+"&ios=true";
+	
+}
+
+//我的店铺和编辑页面切换
+function toPage(self){
+	var url=basePath+$(self).attr("data-url")+"?"+urlParam;
+	window.location.href=url;
+}
+
+//分享我的店铺
+function shareMyShop(){
+	
+	if(!!isAndroid&&isAndroid=="true"){
+		android.h5ShareStoreLink();
+		
+	}else if(!!isIOS&&isIOS=="true"){
+		OCModel.callObjectiveCWithH5ShareStoreLink();
+	}else{
+		$("#shareShopModal").modal("show");
+	}
+}
+
+//新浪微博分享
+function weiboShare(){
+	var windowWidth=$(window).width();
+	var windowHeight=$(window).height();
+	var title=$("#store_name").text();
+	var url=basePath+"view/store/index.html?realm="+realm;
+	var picurl="";
+	var sharesinastring='http://v.t.sina.com.cn/share/share.php?title='+title+'&url='+url+'&content=utf-8&sourceUrl='+url+'&pic='+picurl;  
+	window.open(sharesinastring,'newwindow','height='+windowHeight+',width='+windowWidth+',top=0,left=0');   
+}
+
+//腾讯微博分享
+function txShare(){
+	var windowWidth=$(window).width();
+	var windowHeight=$(window).height();
+	var _t = encodeURI($("#store_name").text());
+	var url=basePath+"view/store/index.html?realm="+realm
+	var _url = encodeURI(url);
+	var _appkey = encodeURI("orLZ21YbekmRaCkQ");
+	var _pic = encodeURI('');
+	var _site = _url;
+	var _u = 'http://v.t.qq.com/share/share.php?title='+_t+'&url='+_url+'&appkey='+_appkey+'&site='+_site+'&pic='+_pic;
+	window.open( _u,'转播到腾讯微博', 'width='+windowWidth+', height='+windowHeight+', top=0, left=0, toolbar=no, menubar=no, scrollbars=no, location=yes, resizable=no, status=no' );
+}
+
+//QQ空间分享
+function QzoneShare(){
+	var windowWidth=$(window).width();
+	var windowHeight=$(window).height();
+	var url=basePath+"view/store/index.html?realm="+realm;
+	var title = $("#store_name").text();
+	var picurl="";
+	var shareqqzonestring='http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?title='+title+'&url='+url+'&pics='+picurl;  
+	window.open(shareqqzonestring,'newwindow','height=auto,width=auto,top=100,left=100'); 
+}
+
+function myShopChangesComplete(){
+	OCModel.callObjectiveCWithH5EditStoreModel({dialog:true});
+}
+loading("hide");
+
+/*
+ * jsonp回调函数
+ */
+function getTemplateCallback(data){
+	var style=data.store_temp;
+	globalStyle=style;  
+	
+	getTheme(style);
+	getContent(style);
+}
+
+function getShopInfoCallback(data){
+	//正方形
+	$(".squareDiv").each(function(){
+		$(this).height($(this).width());
+		if($(this).find("img").attr("data-type")!=""){
+			$(this).find("img").css("min-height",$(this).width());
+		}
+		
+	});
+	
+	//头像默认
+	var headPic;
+	if(!!data.s_sign){
+		headPic=youpai_url+data.s_sign;
+	}else{
+		headPic = 'https://yssj668.b0.upaiyun.com/H5/public/img/avatar/'+globalStyle+'.jpg';
+	}
+	$("#store_s_sign").attr("src",headPic);
+	
+	//店铺名称
+	$("#store_name").html(data.s_name);
+	$("title").text(data.s_name+"--姐妹们的美丽小屋~");
+	
+	//上新和商品总数
+	var new_count=!!data.new_count?data.new_count:0;
+	var shop_count=!!data.shop_count?data.shop_count:0;
+	$("#newCount").html(new_count);
+	$("#allCount").html(shop_count);
+	
+	//购物车数量
+	$("#shopcartCount").text(data.cart_count);
+	
+	//公告
+	if(!!data.notice){
+		$(".shopNotice span").html(data.notice);
+	}else{
+		$(".shopNotice span").html("暂无公告！");
+	}
+	
+	//店主推荐
+	$(".shopRecommendText span").text("店主最爱");
+	
+	//横幅
+	
+	var status=data.circle_status;
+	var balaner;
+	if(status==0){
+		//系统推送
+		balaner=data.circle_sys_pic;
+	}else if(status==1){
+		//用户设定
+		balaner=data.circle_user_pic;
+	}else if(status==2){
+		balaner=data.topShops;
+	}
+	if(!!balaner){
+		var balaners=balaner.split(",");
+		for(var i=0;i<balaners.length;i++){
+			var balanersTemp=balaners[i].split(":");
+			var pic=youpai_url+imgUrl(balanersTemp[1])+balanersTemp[0];
+			var shop_code=balanersTemp[1];
+			if(i==0){
+				$("#root_img").attr("src",pic+"!560");
+				$("#root_img").parent().attr("data-shop_code",shop_code);
+				$("#root_img").parent().attr("onclick","toGoodsDetail(this)");
+			}else{
+				var html='<div><a onclick="toGoodsDetail(this)" data-shop_code="'+shop_code+'"><img class="fadeIn" src="'+pic+'!560"></a></div>';
+				$(".slickContent").append(html);
+			}
+		}
+		$(".slickContent").slick({
+			slidesToShow: 1,
+			slidesToScroll: 1,
+			autoplay: true,
+			autoplaySpeed: 2000,
+			arrows: false,
+			dots: true
+		});
+		
+		$(".slickContent").css("height",$(window).width()/2+"px");
+	}else{
+		$(".slickContent").html('<p class="text-center">无轮播图，请在店铺编辑里进行添加！</p>');
+		$(".slickContent p").css("line-height",$(window).width()/2+"px");
+	}
+	
+	
+	//判断已登录改为个人中心
+	$("#loginText").text("个人中心");
+	
+	getType();
+	
+	scrollfn();
+	
+	if(globalStyle.split("-")[0]=="5"||globalStyle.split("-")[0]=="2"){
+		$("#scroller>ul>li:first").addClass("selected");
+		$("#scroller>ul>li:first img").attr("src","https://yssj668.b0.upaiyun.com/"+$("#scroller>ul>li:first img").attr("data-selected"));
+		var url=basePath+"storeShop/queryShopCondition?realm="+realm+"&back=true";
+		var data={
+			"type1":$("#scroller>ul>li:first a").attr("data-type1"),
+			"type_name":$("#scroller>ul>li:first a").attr("data-type_name"),
+			"pager.curPage":1
+		}
+		if(globalStyle.split("-")[0]=="2"){
+			url=basePath+"storeShop/queryShopCondition?realm="+realm+"&two=true"+"&back=true";
+			data={
+				"type1":$("#scroller>ul>li:first a").attr("data-type1"),
+				"type_name":$("#scroller>ul>li:first a").attr("data-type_name"),
+				"pager.curPage":1,
+				"pager.pageSize":5
+			}
+		}
+		$.ajax({
+			url:url,
+			data:data,
+			dataType:"jsonp",
+		    jsonpCallback:"callbackFun",
+			success:function(data){
+				curPage=1;
+				var tpl=null;
+				if(!!globalStyle&&globalStyle.toString().indexOf("-")>0){
+					var theme=globalStyle.split("-");
+					tpl=template(globalStyle+"goods.html");
+				}else{
+					tpl=template("4-1goods.html");
+				} 
+				$("#goodsContent .row[data-type1='"+$("#scroller>ul>li:first a").attr("data-type1")+"']").html(doT.template(tpl)(data.listShop));
+				
+				//第二套模板9宫格图
+				if($(".goodsitem .squareDiv").length>0){
+					setTimeout(function(){
+						var width=($(".goodsitem:eq(0) .col-xs-4").width()-5).toFixed(0);
+						$(".goodsitem .squareDiv").width(width);
+						$(".goodsitem .squareDiv").height(width);
+					},100);
+				}
+				
+			}
+		});
+	}
+}
+function getHotAreaCallback(data){
+	for(var i=0;i<data.listShop.length;i++){
+		$("#hotArea"+i).attr("src",(youpai_url+imgUrl(data.listShop[i].shop_code)+data.listShop[i].def_pic+"!280"));
+		$("#hotArea"+i).parent().attr("data-shop_code",data.listShop[i].shop_code);
+		$("#hotArea"+i).parent().attr("onclick","toGoodsDetail(this)");
+	}
+}
+function getShopLikeCallback(data){
+	var shopLikes=data.likes;
+	for(var i=0;i<shopLikes.length;i++)
+	{
+		var type=$("#recommond"+i).attr("data-type");
+		if(type=="1"){
+			if(shopLikes[i].is_del==0){
+				var src=!!shopLikes[i].def_pic?shopLikes[i].def_pic:shopLikes[i].show_pic;
+				$("#recommond"+i).attr("src",youpai_url+imgUrl(shopLikes[i].shop_code)+src+"!280");
+			}else{
+				$("#recommond"+i).attr("src","https://yssj668.b0.upaiyun.com/H5/public/img/store/type1.jpg");
+			}
+			
+		}else if(type=="2"){
+			if(shopLikes[i].is_del==0){
+				var four_pics=shopLikes[i].four_pic.split(",");
+				$("#recommond"+i).attr("src",youpai_url+imgUrl(shopLikes[i].shop_code)+four_pics[0]+"!280");
+			}else{
+				$("#recommond"+i).attr("src","https://yssj668.b0.upaiyun.com/H5/public/img/store/type2.jpg");
+			}
+			
+		}else{
+			if(shopLikes[i].is_del==0){
+				var four_pics=shopLikes[i].four_pic.split(",");
+				$("#recommond"+i).attr("src",youpai_url+imgUrl(shopLikes[i].shop_code)+four_pics[1]+"!280");
+			}else{
+				$("#recommond"+i).attr("src","https://yssj668.b0.upaiyun.com/H5/public/img/store/type3.jpg");
+			}
+			
+		}
+		if(shopLikes[i].is_del==0){
+			$("#recommond"+i).parent().attr("data-shop_code",shopLikes[i].shop_code);
+			$("#recommond"+i).parent().attr("onclick","toGoodsDetail(this)");
+		}
+	}
+}
+function goodsListCallback(data){
+	curPage=1;
+	var tpl=null;
+	if(!!globalStyle&&globalStyle.toString().indexOf("-")>0){
+		var theme=globalStyle.split("-");
+		tpl=template(globalStyle+"goods.html");
+	}else{
+		tpl=template("4-1goods.html");
+	} 
+	$("#goodsContent .row[data-type1='"+$("#scroller>ul>li:first a").attr("data-type1")+"']").html(doT.template(tpl)(data.listShop));
+}
+function loadingGoodsCallback(data){
+	setTimeout(function(){
+		if(data.listShop.length==0){
+			$("#loadingStatus").hide().siblings().show().delay(1000).fadeOut();
+			warningBottom("已无更多商品哦(∩＿∩)");
+			return;
+		}else{
+			curPage++;
+			var tpl=null;
+			if(!!globalStyle&&globalStyle.toString().indexOf("-")>0){
+				var theme=globalStyle.split("-");
+				tpl=template(globalStyle+"goods.html");
+			}else{
+				tpl=template("4-1goods.html")
+			}
+			$("#goodsContent .row[data-type1='"+$("#scroller .selected>a").attr("data-type1")+"']").append(doT.template(tpl)(data.listShop));
+			$("#loadingStatus").hide();
+			
+			//第二套模板9宫格图
+			if($(".goodsitem .squareDiv").length>0){
+				setTimeout(function(){
+					var width=($(".goodsitem:eq(0) .col-xs-4").width()-5).toFixed(0);
+					$(".goodsitem .squareDiv").width(width);
+					$(".goodsitem .squareDiv").height(width);
+				},100);
+			}
+			
+		}
+	},10);
+}
+
+function toggleListCallback(data){
+	curPage=1;
+	var tpl=null;
+	if(!!globalStyle&&globalStyle.toString().indexOf("-")>0){
+		var theme=globalStyle.split("-");
+		tpl=template(globalStyle+"goods.html");
+	}else{
+		tpl=template("4-1goods.html");
+	} 
+	$("#goodsContent .row[data-type1='"+_type1+"']").html(doT.template(tpl)(data.listShop));
+	
+	var transform="translate("+(-_index*windowWidth)+"px,0)";
+	$("#goodsContent>div").css({
+		"transform":transform
+	});
+	setTimeout(function(){
+		$("#goodsContent .row[data-type1='"+_type1+"']").siblings().html("");
+	},500);
+	
+	//第二套模板9宫格图
+	if($(".goodsitem .squareDiv").length>0){
+		setTimeout(function(){
+			var width=($(".goodsitem:eq(0) .col-xs-4").width()-5).toFixed(0);
+			$(".goodsitem .squareDiv").width(width);
+			$(".goodsitem .squareDiv").height(width);
+		},100);
+	}
+}
+
+//刷新 
+function refresh(){
+	//window.location.href=basePath+"view/store/edit.html?"+urlParam;
+	OCModel.callObjectiveCWithRefreshMyShop();
+}
+$("body").removeClass("overflow-hidden");
+</script>
+
+</body>
+</html>

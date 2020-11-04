@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell autoresizesSubviews="NO" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="personCell" rowHeight="58" id="KGk-i7-Jjw" customClass="PersonTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <frame key="frameInset" width="320" height="58"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="oMU-5H-MOd">
+                        <constraints>
+                            <constraint firstAttribute="width" constant="25" id="3SS-aV-82M"/>
+                            <constraint firstAttribute="height" constant="25" id="x8n-zO-msw"/>
+                        </constraints>
+                    </imageView>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="更多-副本-3" translatesAutoresizingMaskIntoConstraints="NO" id="7aL-q1-rM8">
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="YKc-Zt-Rsg"/>
+                            <constraint firstAttribute="width" constant="12" id="lBl-ov-vlV"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Jc-6B-NOa">
+                        <constraints>
+                            <constraint firstAttribute="height" constant="30" id="5gR-67-liL"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Til-hL-p1A">
+                        <color key="backgroundColor" red="0.86274509803921573" green="0.86274509803921573" blue="0.86274509803921573" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="oIx-FS-KXT"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="centerY" secondItem="7aL-q1-rM8" secondAttribute="centerY" id="8Aj-Wl-A11"/>
+                    <constraint firstAttribute="centerY" secondItem="oMU-5H-MOd" secondAttribute="centerY" id="8fM-Qd-6It"/>
+                    <constraint firstItem="7aL-q1-rM8" firstAttribute="leading" secondItem="0Jc-6B-NOa" secondAttribute="trailing" constant="6" id="CQi-3C-hBj"/>
+                    <constraint firstAttribute="bottom" secondItem="Til-hL-p1A" secondAttribute="bottom" constant="2" id="Fxi-L5-Pl5"/>
+                    <constraint firstAttribute="centerY" secondItem="0Jc-6B-NOa" secondAttribute="centerY" id="PWz-mp-UyU"/>
+                    <constraint firstItem="0Jc-6B-NOa" firstAttribute="leading" secondItem="oMU-5H-MOd" secondAttribute="trailing" constant="21" id="Ta8-uL-V58"/>
+                    <constraint firstItem="Til-hL-p1A" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="U8m-e6-FLz"/>
+                    <constraint firstAttribute="trailing" secondItem="7aL-q1-rM8" secondAttribute="trailing" constant="20" id="Xx9-Gu-fHn"/>
+                    <constraint firstItem="Til-hL-p1A" firstAttribute="leading" secondItem="oMU-5H-MOd" secondAttribute="leading" id="hcX-jz-Vs1"/>
+                    <constraint firstItem="7aL-q1-rM8" firstAttribute="trailing" secondItem="Til-hL-p1A" secondAttribute="trailing" id="m55-5T-JTK"/>
+                    <constraint firstItem="oMU-5H-MOd" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="o9F-c5-tDF"/>
+                    <constraint firstAttribute="trailing" secondItem="Til-hL-p1A" secondAttribute="trailing" constant="20" id="rnP-E7-Pid"/>
+                </constraints>
+                <variation key="default">
+                    <mask key="constraints">
+                        <exclude reference="U8m-e6-FLz"/>
+                        <exclude reference="rnP-E7-Pid"/>
+                    </mask>
+                </variation>
+            </tableViewCellContentView>
+            <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
+            <connections>
+                <outlet property="constraint_headImg_height" destination="x8n-zO-msw" id="xxf-ep-JdR"/>
+                <outlet property="constraint_headImg_left" destination="o9F-c5-tDF" id="xme-aQ-tuD"/>
+                <outlet property="constraint_headImg_width" destination="3SS-aV-82M" id="4mg-nW-dnB"/>
+                <outlet property="constraint_moreImg_right" destination="Xx9-Gu-fHn" id="KWP-3v-Feu"/>
+                <outlet property="headimg" destination="oMU-5H-MOd" id="rMr-Yn-sms"/>
+                <outlet property="title" destination="0Jc-6B-NOa" id="5nU-tx-1yv"/>
+            </connections>
+            <point key="canvasLocation" x="52" y="121.5"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="更多-副本-3" width="14" height="26"/>
+    </resources>
+</document>

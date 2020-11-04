@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="14F1605" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="reb-mH-Pbd" customClass="KeyboardTool">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y87-sM-o3k">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                    <items>
+                        <barButtonItem id="d8F-x6-pIB"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="r1M-PQ-BzH"/>
+                        <barButtonItem title="完成" style="plain" id="UJM-aR-uXk">
+                            <connections>
+                                <action selector="done:" destination="reb-mH-Pbd" id="NkQ-5i-yYW"/>
+                            </connections>
+                        </barButtonItem>
+                    </items>
+                </toolbar>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Y87-sM-o3k" firstAttribute="leading" secondItem="reb-mH-Pbd" secondAttribute="leading" id="2o6-P5-uc0"/>
+                <constraint firstAttribute="bottom" secondItem="Y87-sM-o3k" secondAttribute="bottom" id="4ib-EB-CcW"/>
+                <constraint firstAttribute="trailing" secondItem="Y87-sM-o3k" secondAttribute="trailing" id="C3Q-Ri-y7j"/>
+                <constraint firstItem="Y87-sM-o3k" firstAttribute="top" secondItem="reb-mH-Pbd" secondAttribute="top" id="z0j-NU-w7r"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="419" y="285"/>
+        </view>
+    </objects>
+</document>

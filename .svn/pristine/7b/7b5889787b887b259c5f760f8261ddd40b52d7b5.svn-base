@@ -1,0 +1,24 @@
+{{if(!!it&&it.length>0){}}
+	{{for(var i=0;i<it.length;i++){}}
+	<div class="col-xs-6">
+		<div class="goodsitem">
+			<div class="relative">
+				<a onclick="toGoodsDetail(this)" data-shop_code="{{=it[i].shop_code}}" data-shop_name="{{=it[i].shop_name}}"><img class="fadeIn" src="{{=youpai_url}}{{=it[i].def_pic}}!280" width="100%"></a>
+				<div class="absolute bg">&nbsp;</div>
+				<div class="absolute"> 
+					<h2>{{=it[i].shop_name}}</h2>
+					<div class="clearfix">
+						<p class="pull-right">
+							<a><span class="{{if(it[i].isLike==1){}} icon-liked {{}else{}} icon-like {{}}}"></span></a>&nbsp;
+							<a><span class="{{if(it[i].isCart==1){}} icon-shopcarted {{}else{}} icon-shopcart {{}}}"></span></a>
+						</p>
+						<p class="pull-left">￥{{=it[i].shop_se_price}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{}}}
+{{}else{}}
+	
+{{}}}

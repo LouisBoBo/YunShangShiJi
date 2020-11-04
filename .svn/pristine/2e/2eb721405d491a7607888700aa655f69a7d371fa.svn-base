@@ -1,0 +1,40 @@
+//
+//  MemberPayTableViewCell.m
+//  YunShangShiJi
+//
+//  Created by hebo on 2019/2/27.
+//  Copyright © 2019年 ios-1. All rights reserved.
+//
+
+#import "MemberPayTableViewCell.h"
+
+@implementation MemberPayTableViewCell
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    
+}
+- (void)refreshData:(NSInteger)selectIndex VipData:(vipDataModel*)model;
+{
+    NSString *retrun_money = [NSString stringWithFormat:@"￥%@",model.return_money];
+    self.cashableLabel.text = [NSString stringWithFormat:@"%@日后可返还%@",model.punch_days,retrun_money];
+    NSMutableAttributedString *noteStr = [[NSMutableAttributedString alloc]initWithString:self.cashableLabel.text];
+    NSRange range = [self.cashableLabel.text rangeOfString:retrun_money];
+    [noteStr addAttribute:NSForegroundColorAttributeName value:tarbarrossred range:NSMakeRange(range.location, range.length)];
+    [self.cashableLabel setAttributedText:noteStr];
+    
+    self.priceLabel.text = [NSString stringWithFormat:@"%.2f",model.vip_price.floatValue];
+    self.discriptionLabel.text = @"预存多张会员卡，权益叠加";
+    
+    self.messageLab2Heigh.constant = model.arrears_price.floatValue==0 ? 25:0;
+    self.message2Top.constant = model.arrears_price.floatValue == 0 ? 10:0;
+}
+
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

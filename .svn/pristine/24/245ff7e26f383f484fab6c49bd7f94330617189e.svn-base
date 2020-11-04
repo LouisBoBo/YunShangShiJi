@@ -1,0 +1,27 @@
+//
+//  MemberPayTableViewCell.h
+//  YunShangShiJi
+//
+//  Created by hebo on 2019/2/27.
+//  Copyright © 2019年 ios-1. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "vipDataModel.h"
+NS_ASSUME_NONNULL_BEGIN
+
+@interface MemberPayTableViewCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UILabel *discriptionLabel;
+@property (weak, nonatomic) IBOutlet UILabel *cashableLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *priceLabel;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageLab1Heigh;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *messageLab2Heigh;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *message1Top;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *message2Top;
+@property (strong, nonatomic) IBOutlet UILabel *bounsLabel;
+
+- (void)refreshData:(NSInteger)selectIndex VipData:(vipDataModel*)model;
+@end
+
+NS_ASSUME_NONNULL_END
